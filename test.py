@@ -17,7 +17,7 @@ def process_weight_reps(sets):
 	weight_reps = []
 
 	for weight, reps in (each_set.split('x') for each_set in sets):
-		weight_reps.append({'weight': weight, 'reps': reps})
+		weight_reps.append({'weight': int(weight), 'reps': int(reps)})
 
 	return weight_reps
 
@@ -26,7 +26,7 @@ def join_weights_reps(weight_reps_list):
 	joined_weights_reps = []
 
 	for each_set in weight_reps_list:
-		joined_weights_reps.append('x'.join((each_set['weight'], each_set['reps'])))
+		joined_weights_reps.append('{weight}x{reps}'.format(**each_set))
 
 	return ', '.join(joined_weights_reps)
 
@@ -44,6 +44,13 @@ def store_workout(lift_type, when, sets):
 			exercises[lift_type] += weight_reps
 
 	print_workouts()
+
+	lift_type_goals = goals.get(lift_type, [])
+
+	for goal in lift_type_goals:
+		for x in weight_reps:
+			if x['reps'] >= goal['reps'] and x['weight'] >= goal['weight']:
+				print 'YAY! You hit your goal of {weight}x{reps}'.format(**goal)
 
 
 def print_workouts():
@@ -71,7 +78,6 @@ def store_goal(lift_type, new_goals):
 
 
 def print_goals():
-
 	for lift_type, goal_list in goals.iteritems():
 		weight_reps = join_weights_reps(goal_list)
 		print "%s goal: %s" % (lift_type, weight_reps)
