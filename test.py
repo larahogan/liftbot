@@ -13,16 +13,35 @@ def process_msg(message):
 		store_workout(commands[0], commands[1], commands[2:])
 
 
-def store_workout(lift_type, when, sets):
-	exercises = workouts.get(when, None)
+def process_weight_reps(sets):
+	weight_reps = []
 
+	for weight, reps in (each_set.split('x') for each_set in sets):
+		weight_reps.append({'weight': weight, 'reps': reps})
+
+	return weight_reps
+
+
+def join_weights_reps(weight_reps_list):
+	joined_weights_reps = []
+
+	for each_set in weight_reps_list:
+		joined_weights_reps.append('x'.join((each_set['weight'], each_set['reps'])))
+
+	return ', '.join(joined_weights_reps)
+
+
+def store_workout(lift_type, when, sets):
+	weight_reps = process_weight_reps(sets)
+
+	exercises = workouts.get(when, None)
 	if exercises is None:
-		workouts[when] = {lift_type: sets}
+		workouts[when] = {lift_type: weight_reps}
 	else:
 		if lift_type not in exercises:
-			exercises[lift_type] = sets
+			exercises[lift_type] = weight_reps
 		else:
-			exercises[lift_type] += sets
+			exercises[lift_type] += weight_reps
 
 	print_workouts()
 
@@ -30,23 +49,32 @@ def store_workout(lift_type, when, sets):
 def print_workouts():
 	for when, exercises in workouts.iteritems():
 		print when
+
 		for lift_type, lifts in exercises.iteritems():
-			print "%s: %s" % (lift_type, ', '.join(lifts))
+			weight_reps = join_weights_reps(lifts)
+			print "%s: %s" % (lift_type, weight_reps)
 		print
 
 
+# {'deadlift': [ {'weight': 100, 'reps': 1}, {'weight': 50, 'reps': 2} ] }
+
+
 def store_goal(lift_type, new_goals):
+	weight_reps = process_weight_reps(new_goals)
+
 	if lift_type not in goals:
-		goals[lift_type] = new_goals
+		goals[lift_type] = weight_reps
 	else:
-		goals[lift_type] += new_goals
+		goals[lift_type] += weight_reps
 
 	print_goals()
 
 
 def print_goals():
-	for lift_type, goal in goals.iteritems():
-		print "%s: %s" % (lift_type, ', '.join(goal))
+
+	for lift_type, goal_list in goals.iteritems():
+		weight_reps = join_weights_reps(goal_list)
+		print "%s goal: %s" % (lift_type, weight_reps)
 	print
 
 
