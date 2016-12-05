@@ -23,9 +23,7 @@
         bench: 75 on XXXX
         squats: 100 on 12/1/2016
 
-*This calculator is based on the formula derived by Boyd Epley in 1985, which is 1RM = weight x (1 + (reps / 30))*
-
-*or, [https://en.wikipedia.org/wiki/One-repetition_maximum](Wikipedia)*
+*This calculator is based on the formula derived by Boyd Epley in 1985, which is 1RM = weight x (1 + (reps / 30)). More in [Wikipedia](https://en.wikipedia.org/wiki/One-repetition_maximum)*
 
     ?last bench
         your last bench (12/1/2016): **45x5 55x5 65x5**

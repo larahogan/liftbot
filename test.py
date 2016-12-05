@@ -2,6 +2,7 @@
 
 workouts = {}
 goals = {}
+one_rep_max_dict = {}
 
 
 def process_msg(message):
@@ -9,6 +10,8 @@ def process_msg(message):
 
 	if commands[1] == 'goal':
 		store_goal(commands[0], commands[2:])
+	elif commands[1] == '1rm':
+		onerm(commands[0], commands[2:])
 	else:
 		store_workout(commands[0], commands[1], commands[2:])
 
@@ -45,12 +48,25 @@ def store_workout(lift_type, when, sets):
 
 	print_workouts()
 
+	for x in weight_reps:
+		calculate_one_rep_max(when, lift_type, x['weight'], x['reps'])
+
 	lift_type_goals = goals.get(lift_type, [])
 
 	for goal in lift_type_goals:
 		for x in weight_reps:
 			if x['reps'] >= goal['reps'] and x['weight'] >= goal['weight']:
 				print 'YAY! You hit your goal of {weight}x{reps}'.format(**goal)
+
+
+def calculate_one_rep_max(when, lift_type, weight, reps):
+	# 1RM = weight x (1 + (reps / 30))
+
+	this_orm = weight*(1+reps/30.0)
+
+	if lift_type not in one_rep_max_dict or this_orm >= one_rep_max_dict[lift_type]['calculated_max']:
+		one_rep_max_dict[lift_type] = {'date': when, 'calculated_max': this_orm, 'weight': int(weight), 'reps': int(reps)}
+		print "Your new one rep max: {calculated_max}, based on {weight}x{reps}".format(**one_rep_max_dict[lift_type])
 
 
 def print_workouts():
