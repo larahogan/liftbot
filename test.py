@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+
 workouts = {}
 goals = {}
 one_rep_max_dict = {}
